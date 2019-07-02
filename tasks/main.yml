@@ -1,0 +1,41 @@
+---
+- name: Ensure builds directory exist
+  file:
+    path: "{{ build_dir }}"
+    state: directory
+ 
+- name: Ensure profile directory exist
+  file:
+    path: "{{ build_dir }}/{{ build_profile }}-bp/"
+    state: directory
+
+- name: Get stage3 to use as seed
+  get_url:
+    url: "http://distfiles.gentoo.org/releases/amd64/autobuilds/current-stage3-amd64-systemd/stage3-amd64-systemd-{{ seeds_version_stamp }}.tar.bz2"
+    dest: "{{ build_dir }}/{{ build_profile }}-bp/"
+
+- name: Unarchive stage3
+  unarchive:
+    src: "{{ build_dir }}/{{ build_profile }}-bp/stage3-amd64-systemd-{{ seeds_version_stamp }}.tar.bz2"
+    dest: "{{ build_dir }}/{{ build_profile }}-bp/"
+
+#- name: Deploy portage configuration
+
+
+- name: Sync portage in chroot environment
+  hosts: "{{ build_dir }}/{{ build_profile }}-bp/"
+  connection: chroot
+  portage:
+    update: yes
+
+- name: Upgrade chroot system
+  hosts: "{{ build_dir }}/{{ build_profile }}-bp/"
+  connection: chroot
+  portage:
+    sync: yes
+
+
+#- name: Compile requested package
+
+#- name: Configure lighthttpd
+
