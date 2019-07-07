@@ -11,7 +11,6 @@ Any pre-requisites that may not be covered by Ansible itself or the role should 
 Role Variables
 --------------
 
-    seeds_version_stamp: 20190628
     build_profile: nas
     build_dir: /var/builds
 
@@ -25,9 +24,9 @@ Example Playbook
 
 Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
 
-    - hosts: servers
+    - hosts: localhost
       roles:
-         - { role: username.rolename, x: 42 }
+        - { role: gentoo-buildserver, build_dir: /var/builds, build_profile: nas }
 
 License
 -------
