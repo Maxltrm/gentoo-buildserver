@@ -9,33 +9,53 @@
     path: "{{ build_dir }}/{{ build_profile }}-bp/"
     state: directory
 
-- name: Get stage3 to use as seed
+- name: Determine latest stage3
   get_url:
-    url: "http://distfiles.gentoo.org/releases/amd64/autobuilds/current-stage3-amd64-systemd/stage3-amd64-systemd-{{ seeds_version_stamp }}.tar.bz2"
+    url: "http://distfiles.gentoo.org/releases/amd64/autobuilds/latest-stage3-amd64-systemd.txt"
     dest: "{{ build_dir }}/{{ build_profile }}-bp/"
+
+- name: set seeds_varsion_stamp
+  set_fact:
+    seeds_version_stamp: "{{ lookup('file', '{{ build_dir }}/{{ build_profile }}-bp/latest-stage3-amd64-systemd.txt') | regex_search('[0-9]{8}.tar.bz2') | regex_replace('.tar.bz2','') }}"
+
+- name: Latest version debug
+  debug: msg="Seed version is {{ seeds_version_stamp }}"
+
+#- name: Get stage3 to use as seed
+#  get_url:
+#    url: "http://distfiles.gentoo.org/releases/amd64/autobuilds/current-stage3-amd64-systemd/stage3-amd64-systemd-{{ seeds_version_stamp }}.tar.bz2"
+#    dest: "{{ build_dir }}/{{ build_profile }}-bp/"
 
 - name: Unarchive stage3
   unarchive:
     src: "{{ build_dir }}/{{ build_profile }}-bp/stage3-amd64-systemd-{{ seeds_version_stamp }}.tar.bz2"
     dest: "{{ build_dir }}/{{ build_profile }}-bp/"
+    creates: "{{ build_dir }}/{{ build_profile }}-bp/etc/issue"
 
-#- name: Deploy portage configuration
+- name: Deploy portage configuration
+  copy:
+    src: "{{ build_profile }}-portage"
+    dest: "{{ build_dir }}/{{ build_profile }}-bp/etc/portage"
 
-
-- name: Sync portage in chroot environment
-  hosts: "{{ build_dir }}/{{ build_profile }}-bp/"
-  connection: chroot
+- name: Install lighthttpd
   portage:
-    update: yes
+    package: www-servers/lighttpd
+    state: latest
 
-- name: Upgrade chroot system
-  hosts: "{{ build_dir }}/{{ build_profile }}-bp/"
-  connection: chroot
-  portage:
-    sync: yes
+- name: Configure lighthttpd to export bin packages
+  replace:
+    path: /etc/lighttpd/lighttpd.conf
+    regexp: '^#(\s+\"mod_alias\",)$'
+    replace: '\1'
+    backup: yes
 
+- name: Enable directory listing
+  replace:
+    path: /etc/lighttpd/lighttpd.conf
+    regexp: '^#(\s+dir-listing.activate\s+=\s+\"enable\")$'
+    replace: '\1'
 
-#- name: Compile requested package
-
-#- name: Configure lighthttpd
-
+- name: "Create alias url for {{ build_profile }}"
+  lineinfile:
+    path: /etc/lighttpd/lighttpd.conf
+    line: 'alias.url = ( "/packages" => "{{ build_dir }}/{{ build_profile }}-bp/usr/portage/packages/" )'
