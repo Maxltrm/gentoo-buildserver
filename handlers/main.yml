@@ -1,2 +1,7 @@
 ---
-# handlers file for gentoo-buildserver
+
+- name: Start and enable lighttpd service
+  service:
+    name: lighttpd
+    state: restarted
+    enabled: yes

@@ -55,7 +55,15 @@
     regexp: '^#(\s+dir-listing.activate\s+=\s+\"enable\")$'
     replace: '\1'
 
+- name: Bind lighttpd to default address
+  replace:
+    path: /etc/lighttpd/lighttpd.conf
+    regexp: '^#(\s+server\.bind\s+=\s)(.*)$'
+    replace: '\1"{{ ansible_default_ipv4.address }}"'
+
 - name: "Create alias url for {{ build_profile }}"
   lineinfile:
     path: /etc/lighttpd/lighttpd.conf
-    line: 'alias.url = ( "/packages" => "{{ build_dir }}/{{ build_profile }}-bp/usr/portage/packages/" )'
+    line: 'alias.url = ( "/packages-{{ build_profile }}" => "{{ build_dir }}/{{ build_profile }}-bp/usr/portage/packages/" )'
+  notify:
+    - Start and enable lighttpd service
