@@ -1,10 +1,10 @@
 ---
-- name: Ensure builds directory exist
+- name: Ensure builds directory exists
   file:
     path: "{{ build_dir }}"
     state: directory
  
-- name: Ensure profile directory exist
+- name: Ensure profile directory exists
   file:
     path: "{{ build_dir }}/{{ build_profile }}-bp/"
     state: directory
@@ -14,17 +14,17 @@
     url: "http://distfiles.gentoo.org/releases/amd64/autobuilds/latest-stage3-amd64-systemd.txt"
     dest: "{{ build_dir }}/{{ build_profile }}-bp/"
 
-- name: set seeds_varsion_stamp
+- name: set seeds_version_stamp
   set_fact:
     seeds_version_stamp: "{{ lookup('file', '{{ build_dir }}/{{ build_profile }}-bp/latest-stage3-amd64-systemd.txt') | regex_search('[0-9]{8}.tar.bz2') | regex_replace('.tar.bz2','') }}"
 
 - name: Latest version debug
-  debug: msg="Seed version is {{ seeds_version_stamp }}"
+  debug: msg="Latest stage3 stamp is {{ seeds_version_stamp }}"
 
-#- name: Get stage3 to use as seed
-#  get_url:
-#    url: "http://distfiles.gentoo.org/releases/amd64/autobuilds/current-stage3-amd64-systemd/stage3-amd64-systemd-{{ seeds_version_stamp }}.tar.bz2"
-#    dest: "{{ build_dir }}/{{ build_profile }}-bp/"
+- name: Get stage3 seed
+  get_url:
+    url: "http://distfiles.gentoo.org/releases/amd64/autobuilds/current-stage3-amd64-systemd/stage3-amd64-systemd-{{ seeds_version_stamp }}.tar.bz2"
+    dest: "{{ build_dir }}/{{ build_profile }}-bp/"
 
 - name: Unarchive stage3
   unarchive:
@@ -37,12 +37,12 @@
     src: "{{ build_profile }}-portage"
     dest: "{{ build_dir }}/{{ build_profile }}-bp/etc/portage"
 
-- name: Install lighthttpd
+- name: Install lightttpd
   portage:
     package: www-servers/lighttpd
     state: latest
 
-- name: Configure lighthttpd to export bin packages
+- name: Configure lightttpd to export bin packages
   replace:
     path: /etc/lighttpd/lighttpd.conf
     regexp: '^#(\s+\"mod_alias\",)$'
