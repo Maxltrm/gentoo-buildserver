@@ -13,6 +13,7 @@
   get_url:
     url: "http://distfiles.gentoo.org/releases/amd64/autobuilds/latest-stage3-amd64-systemd.txt"
     dest: "{{ build_dir }}/{{ build_profile }}-bp/"
+    force: yes
 
 - name: set seeds_version_stamp
   set_fact:
@@ -31,6 +32,9 @@
     src: "{{ build_dir }}/{{ build_profile }}-bp/stage3-amd64-systemd-{{ seeds_version_stamp }}.tar.bz2"
     dest: "{{ build_dir }}/{{ build_profile }}-bp/"
     creates: "{{ build_dir }}/{{ build_profile }}-bp/etc/issue"
+
+- name: Copy resolv.conf
+  command: cp -L /etc/resolv.conf {{ build_dir }}/{{ build_profile }}-bp/etc/
 
 - name: Deploy portage configuration
   copy:
