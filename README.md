@@ -13,7 +13,8 @@ Role Variables
 
     build_profile: example
     build_dir: /var/builds
-    download_stage3: true
+    download_latest_stage3: true
+    number_of_make_jobs: 12
 
 Dependencies
 ------------
@@ -27,7 +28,7 @@ Including an example of how to use your role (for instance, with variables passe
 
     - hosts: localhost
       roles:
-        - { role: gentoo-buildserver, build_dir: /var/builds, build_profile: example, download_stage3: true }
+        - { role: gentoo-buildserver, build_dir: /var/builds, build_profile: example, download_latest_stage3: true, number_of_make_jobs: 12}
 
 License
 -------

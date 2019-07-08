@@ -19,15 +19,15 @@
   set_fact:
     seeds_version_stamp: "{{ lookup('file', '{{ build_dir }}/{{ build_profile }}-bp/latest-stage3-amd64-systemd.txt') | regex_search('[0-9]{8}.tar.bz2') | regex_replace('.tar.bz2','') }}"
 
-- name: Latest version debug
+- name: Show latest stage3 snapshot
   debug: msg="Latest stage3 stamp is {{ seeds_version_stamp }}"
-  when: download_stage3|bool
+  when: download_latest_stage3|bool
 
 - name: Get stage3 seed
   get_url:
     url: "http://distfiles.gentoo.org/releases/amd64/autobuilds/current-stage3-amd64-systemd/stage3-amd64-systemd-{{ seeds_version_stamp }}.tar.bz2"
     dest: "{{ build_dir }}/{{ build_profile }}-bp/"
-  when: download_stage3|bool
+  when: download_latest_stage3|bool
 
 - name: Unarchive stage3
   unarchive:
@@ -43,7 +43,13 @@
     src: "{{ build_profile }}-portage"
     dest: "{{ build_dir }}/{{ build_profile }}-bp/etc/portage"
 
-- name: Install lightttpd
+- name: Set make number of jobs 
+  replace:
+    path: "{{ build_dir }}/{{ build_profile }}-bp/etc/portage/make.conf"
+    regexp: '^(MAKEOPTS=)(.*)$'
+    replace: '\1"-j{{ number_of_make_jobs }}"'
+
+- name: Install lightttpd on build server
   portage:
     package: www-servers/lighttpd
     state: latest
