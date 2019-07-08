@@ -21,11 +21,13 @@
 
 - name: Latest version debug
   debug: msg="Latest stage3 stamp is {{ seeds_version_stamp }}"
+  when: download_stage3|bool
 
 - name: Get stage3 seed
   get_url:
     url: "http://distfiles.gentoo.org/releases/amd64/autobuilds/current-stage3-amd64-systemd/stage3-amd64-systemd-{{ seeds_version_stamp }}.tar.bz2"
     dest: "{{ build_dir }}/{{ build_profile }}-bp/"
+  when: download_stage3|bool
 
 - name: Unarchive stage3
   unarchive:

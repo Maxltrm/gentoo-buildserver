@@ -1,0 +1,20 @@
+sys-kernel/genkernel-next ~amd64
+media-tv/kodi ~amd64
+sys-kernel/gentoo-sources ~amd64
+# required by media-tv/kodi-18.1_rc1::gentoo
+# required by @selected
+# required by @world (argument)
+=media-video/ffmpeg-4.1.1 ~amd64
+# required by sys-apps/tuned (argument)
+=sys-apps/tuned-2.10.0 ~amd64
+# required by sys-apps/tuned-2.10.0::gentoo
+# required by sys-apps/tuned (argument)
+=dev-python/python-linux-procfs-0.4.6 ~amd64
+# required by media-plugins/kodi-pvr-iptvsimple-3.5.7::gentoo
+# required by media-plugins/kodi-pvr-iptvsimple (argument)
+=media-libs/kodi-platform-18.0_pre20190429 ~amd64
+# required by media-plugins/kodi-pvr-iptvsimple-3.5.7::gentoo
+# required by media-plugins/kodi-pvr-iptvsimple (argument)
+=dev-libs/rapidxml-1.13-r1 ~amd64
+# required by media-plugins/kodi-pvr-iptvsimple (argument)
+=media-plugins/kodi-pvr-iptvsimple-3.5.7 ~amd64

@@ -1,23 +1,24 @@
-Role Name
+gentoo-buildserver
 =========
 
-A brief description of the role goes here.
+Configure a gentoo multiprofile build server based on chroot and configure lighttpd to expose bin packages
 
 Requirements
 ------------
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+None.
 
 Role Variables
 --------------
 
-    build_profile: nas
+    build_profile: example
     build_dir: /var/builds
+    download_stage3: true
 
 Dependencies
 ------------
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+None.
 
 Example Playbook
 ----------------
@@ -26,7 +27,7 @@ Including an example of how to use your role (for instance, with variables passe
 
     - hosts: localhost
       roles:
-        - { role: gentoo-buildserver, build_dir: /var/builds, build_profile: nas }
+        - { role: gentoo-buildserver, build_dir: /var/builds, build_profile: example, download_stage3: true }
 
 License
 -------
