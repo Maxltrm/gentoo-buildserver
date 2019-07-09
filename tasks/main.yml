@@ -38,9 +38,16 @@
 - name: Copy resolv.conf
   command: cp -L /etc/resolv.conf {{ build_dir }}/{{ build_profile }}-bp/etc/
 
+- name: Clean portage default conf
+  block:
+    - name: Remove portage directory
+      file: state=absent path="{{ build_dir }}/{{ build_profile }}-bp/etc/portage"
+    - name: Create clean portage directory
+      file: state=directory path="{{ build_dir }}/{{ build_profile }}-bp/etc/portage"
+
 - name: Deploy portage configuration
-  copy:
-    src: "{{ build_profile }}-portage"
+  synchronize:
+    src: "{{ build_profile }}-portage/"
     dest: "{{ build_dir }}/{{ build_profile }}-bp/etc/portage"
 
 - name: Set make number of jobs 
