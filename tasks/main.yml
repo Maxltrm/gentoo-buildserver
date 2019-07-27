@@ -47,8 +47,13 @@
 
 - name: Deploy portage configuration
   synchronize:
-    src: "{{ build_profile }}-portage/"
+    src: "{{ build_profile }}-portage/conf"
     dest: "{{ build_dir }}/{{ build_profile }}-bp/etc/portage"
+
+- name: Copy target world file
+  copy:
+    src: "{{ build_profile }}-portage/world"
+    dest: "{{ build_dir }}/{{ build_profile }}-bp/var/lib/portage/world"
 
 - name: Set make number of jobs 
   replace:
